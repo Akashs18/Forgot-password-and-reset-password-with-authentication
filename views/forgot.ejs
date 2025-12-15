@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Forgot Password</title>
+</head>
+<body>
+  <h2>Forgot Password</h2>
+
+  <% if (error) { %>
+    <p style="color:red"><%= error %></p>
+    <%= console.log("forgot pass");%>
+  <% } %>
+
+  <% if (message) { %>
+    <p style="color:green"><%= message %></p>
+  <% } %>
+
+  <form action="/forgot" method="POST">
+    <input type="email" name="email" placeholder="Enter your email" required>
+    <button type="submit">Send Reset Link</button>
+  </form>
+</body>
+</html>
