@@ -2,30 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Forgot Password</title>
+  <title>Employee Signup</title>
+
   <style>
     body {
       font-family: "Segoe UI", Tahoma, Arial, sans-serif;
       background-color: #f4f6f9;
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
     }
 
     .container {
-      background: #fff;
+      background: #ffffff;
       padding: 30px 40px;
+      width: 360px;
       border-radius: 6px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      width: 360px;
     }
 
     h2 {
-      text-align: center;
-      color: #333;
       margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+
+    label {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 5px;
+      display: block;
     }
 
     input {
@@ -48,7 +57,7 @@
       background-color: #007bff;
       border: none;
       border-radius: 4px;
-      color: #fff;
+      color: #ffffff;
       font-size: 15px;
       cursor: pointer;
     }
@@ -57,61 +66,56 @@
       background-color: #0056b3;
     }
 
-    .message {
-      font-size: 14px;
-      padding: 8px;
-      margin-bottom: 15px;
-      border-radius: 4px;
-      text-align: center;
-    }
-
     .error {
       background-color: #ffe6e6;
       color: #b30000;
-    }
-
-    .success {
-      background-color: #e6ffe6;
-      color: #006600;
-    }
-
-    .links {
+      padding: 8px;
+      border-radius: 4px;
+      margin-bottom: 15px;
       text-align: center;
-      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .footer {
+      margin-top: 15px;
+      text-align: center;
       font-size: 13px;
     }
 
-    .links a {
+    .footer a {
       color: #007bff;
       text-decoration: none;
-      margin: 0 5px;
     }
 
-    .links a:hover {
+    .footer a:hover {
       text-decoration: underline;
     }
   </style>
 </head>
+
 <body>
   <div class="container">
-    <h2>Forgot Password</h2>
+    <h2>Employee Signup</h2>
 
     <% if (error) { %>
-      <div class="message error"><%= error %></div>
+      <div class="error"><%= error %></div>
     <% } %>
 
-    <% if (message) { %>
-      <div class="message success"><%= message %></div>
-    <% } %>
+    <form method="POST" action="/signup">
+      <label for="username">Full Name</label>
+      <input type="text" name="username" id="username" placeholder="Enter full name" required>
 
-    <form action="/forgot" method="POST">
-      <input type="email" name="email" placeholder="Enter your email" required>
-      <button type="submit">Send Reset Link</button>
+      <label for="email">Email Address</label>
+      <input type="email" name="email" id="email" placeholder="company@email.com" required>
+
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" placeholder="Create password" required>
+
+      <button type="submit">Create Account</button>
     </form>
 
-    <div class="links">
-      
-      <a href="/signup">Sign Up</a>
+    <div class="footer">
+      Already have an account? <a href="/login">Login</a>
     </div>
   </div>
 </body>
