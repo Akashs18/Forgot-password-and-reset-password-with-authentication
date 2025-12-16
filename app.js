@@ -4,6 +4,8 @@ import { Pool } from "pg";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 
 // -------------------- CONFIG --------------------
 const app = express();
@@ -28,11 +30,31 @@ const pool = new Pool({
   }
 });
 
+// -------------------- SESSION STORE --------------------
+const PgSession = connectPgSimple(session);
+
+app.use(
+  session({
+    store: new PgSession({
+      pool,
+      tableName: "session"
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24
+    }
+  })
+);
+
 // -------------------- EMAIL --------------------
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",  // Use explicit host
-  port: 465,               // SSL port
-  secure: true,            // true = SSL
+  port: 587,               // SSL port
+  secure: false,            // true = SSL
   auth: {
     user: GMAIL_USER,
     pass: GMAIL_PASS      // Use Gmail App Password
@@ -41,6 +63,14 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false
   }
 });
+
+// -------------------- AUTH MIDDLEWARE --------------------
+function requireAuth(req, res, next) {
+  if (!req.session.userId) {
+    return res.redirect("/");
+  }
+  next();
+}
 
 // -------------------- ROUTES --------------------
 
@@ -65,6 +95,10 @@ app.post("/login", async (req, res) => {
 
     if (!match) return res.render("login", { error: "Incorrect password" });
 
+    // ✅ CREATE SESSION
+    req.session.userId = user.id;
+    req.session.email = user.email;
+
     res.redirect("/dashboard");
 
   } catch (err) {
@@ -75,7 +109,7 @@ app.post("/login", async (req, res) => {
 
 // DASHBOARD
 app.get("/dashboard", (req, res) => {
-  res.render("dashboard");
+  res.render("dashboard",{ email :req.session.email});
 });
 
 // SIGNUP
@@ -107,6 +141,12 @@ app.post("/signup", async (req, res) => {
     console.error(err);
     res.render("signup", { error: "Database error or user already exists" });
   }
+});
+// LOGOUT
+app.get("/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.redirect("/");
+  });
 });
 
 // -------------------- FORGOT PASSWORD --------------------
