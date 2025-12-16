@@ -18,10 +18,10 @@ app.use(express.static(path.join(path.resolve(), "public")));
 
 // -------------------- DATABASE --------------------
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "postgres",
-  password: "123456",
+  user: "firstdemo_examle_user",
+  host: "dpg-d50evbfgi27c73aje1pg-a.oregon-postgres.render.com",
+  database: "firstdemo_examle",
+  password: "6LBDu09slQHqq3r0GcwbY1nPera4H5Kk",
   port: 5432
 });
 
