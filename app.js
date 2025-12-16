@@ -22,7 +22,10 @@ const pool = new Pool({
   host: "dpg-d50evbfgi27c73aje1pg-a.oregon-postgres.render.com",
   database: "firstdemo_examle",
   password: "6LBDu09slQHqq3r0GcwbY1nPera4H5Kk",
-  port: 5432
+  port: 5432,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // -------------------- EMAIL --------------------
