@@ -30,10 +30,12 @@ const pool = new Pool({
 
 // -------------------- EMAIL --------------------
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",  // Use explicit host
+  port: 465,               // SSL port
+  secure: true,            // true = SSL
   auth: {
     user: GMAIL_USER,
-    pass: GMAIL_PASS
+    pass: GMAIL_PASS      // Use Gmail App Password
   },
   tls: {
     rejectUnauthorized: false
