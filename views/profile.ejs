@@ -1,0 +1,34 @@
+<!-- views/profile.ejs -->
+<div id="profile" class="section card">
+  <h2>My Profile</h2>
+
+  <!-- Personal Info -->
+  <div style="margin-bottom: 20px;">
+    <h3>Personal Information</h3>
+    <div style="display: flex; align-items: center; margin-top: 10px;">
+      <img src="<%= profile.profile_photo || '/default-avatar.png' %>" alt="Profile Photo" style="width: 100px; height: 100px; border-radius: 50%; margin-right: 20px; border: 1px solid #ccc;">
+      <div>
+        <p><strong>Name:</strong> <%= profile.username %></p>
+        <p><strong>Email:</strong> <%= profile.email %></p>
+        <p><strong>Phone:</strong> <%= profile.phone %></p>
+        <p><strong>Emergency Contact:</strong> <%= profile.emergency_contact %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Job Info -->
+  <div style="margin-bottom: 20px;">
+    <h3>Job Information</h3>
+    <p><strong>Job Title:</strong> <%= profile.job_title %></p>
+    <p><strong>Department:</strong> <%= profile.department %></p>
+    <p><strong>Reporting Manager:</strong> <%= profile.reporting_manager %></p>
+  </div>
+
+  <!-- Employment Details -->
+  <div>
+    <h3>Employment Details</h3>
+    <p><strong>Start Date:</strong> <%= profile.start_date.toDateString() %></p>
+    <p><strong>Contract Type:</strong> <%= profile.contract_type %></p>
+    <p><strong>Work Location:</strong> <%= profile.work_location %></p>
+  </div>
+</div>

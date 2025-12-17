@@ -1,118 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Office Dashboard</title>
-  <link rel="stylesheet" href="/styles.css">
+<meta charset="UTF-8">
+<title>Local Purchase</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-      background-color: #f4f6f9;
-    }
-
-    .header {
-      background-color: #1f2937;
-      color: #ffffff;
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 500;
-    }
-
-    .logout-btn {
-      background-color: #dc2626;
-      color: #ffffff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .logout-btn:hover {
-      background-color: #b91c1c;
-    }
-
-    .container {
-      padding: 30px;
-    }
-
-    .card {
-      background-color: #ffffff;
-      padding: 25px;
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      max-width: 900px;
-      margin: auto;
-    }
-
-    .card h2 {
-      margin-top: 0;
-      color: #111827;
-    }
-
-    .info {
-      margin-top: 15px;
-      color: #374151;
-      line-height: 1.6;
-    }
-
-    .footer {
-      margin-top: 40px;
-      text-align: center;
-      font-size: 13px;
-      color: #6b7280;
-    }
-  </style>
+<style>
+body { margin:0; font-family: Arial; background:#f4f6f9; }
+.layout { display:flex; height:100vh; }
+.sidebar { width:240px; background:#1f2937; color:white; padding-top:20px; }
+.sidebar h2 { text-align:center; margin-bottom:20px; }
+.nav { list-style:none; padding:0; }
+.nav a { display:block; padding:12px 20px; color:#e5e7eb; cursor:pointer; }
+.nav a.active, .nav a:hover { background:#374151; }
+.main { flex:1; display:flex; flex-direction:column; }
+.header { background:white; padding:15px 25px; display:flex; justify-content:space-between; border-bottom:1px solid #e5e7eb; }
+.logout-btn { background:#dc2626; color:white; border:none; padding:8px 16px; border-radius:4px; }
+.content { padding:30px; }
+.card { background:white; padding:25px; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+th, td { border:1px solid #ddd; padding:8px; }
+th { background:#f1f5f9; }
+td input { width:100%; border:none; outline:none; }
+button { padding:6px 12px; margin-top:10px; }
+</style>
 </head>
 
 <body>
 
-  <!-- Header -->
-  <div class="header">
-    <h1>Company Internal Dashboard</h1>
+<div class="layout">
 
-    <form action="/logout" method="POST">
-      <button type="submit" class="logout-btn">Logout</button>
-    </form>
+  <aside class="sidebar">
+    <h2>Employee Portal</h2>
+    <ul class="nav">
+      <li><a class="active">Local Purchase</a></li>
+    </ul>
+  </aside>
+
+  <div class="main">
+
+    <header class="header">
+      <h3>Local Purchase</h3>
+      <form action="/logout" method="POST">
+        <button class="logout-btn">Logout</button>
+      </form>
+    </header>
+
+    <section class="content">
+      <div class="card">
+        <h2>Local Purchase Entry</h2>
+
+        <button onclick="addRow()">➕ Add Row</button>
+<button onclick="saveAll()">💾 Save</button>
+
+<table id="purchaseTable">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Vendor</th>
+      <th>Qty</th>
+      <th>Price</th>
+      <th>Date</th>
+      <th>Bill</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+
+      </div>
+    </section>
+
   </div>
+</div>
 
-  <!-- Main Content -->
-  <div class="container">
-    <div class="card">
-      <h2>Welcome</h2>
-      <p class="info">
-        You are successfully logged into the internal office system.
-        Please use the available tools responsibly and ensure data confidentiality.
-      </p>
+<script>
+async function loadPurchases() {
+  const res = await fetch("/local-purchase");
+  const data = await res.json();
+  const tbody = document.querySelector("#purchaseTable tbody");
+  tbody.innerHTML = "";
 
-      <p class="info">
-        If you experience any issues, contact the IT support team.
-      </p>
-    </div>
+  data.forEach(p => {
+    const row = tbody.insertRow();
+    row.innerHTML = `
+      <td contenteditable>${p.item}</td>
+      <td contenteditable>${p.vendor}</td>
+      <td contenteditable>${p.quantity}</td>
+      <td contenteditable>${p.price}</td>
+      <td contenteditable>${p.purchase_date.slice(0,10)}</td>
+      <td>${p.bill_file ? `<a href="${p.bill_file}" target="_blank">View</a>` : ""}</td>
+      <td>
+        <button onclick="updateRow(${p.id}, this)">✏️</button>
+        <button onclick="deleteRow(${p.id})">🗑️</button>
+      </td>
+    `;
+  });
+}
 
-    <div class="footer">
-      © 2025 Company Name · Internal Use Only
-    </div>
-  </div>
+function addRow() {
+  const tbody = document.querySelector("#purchaseTable tbody");
+  const row = tbody.insertRow();
+  row.innerHTML = `
+    <td><input></td>
+    <td><input></td>
+    <td><input type="number"></td>
+    <td><input type="number"></td>
+    <td><input type="date"></td>
+    <td><input type="file"></td>
+    <td>New</td>
+  `;
+}
 
-  <!-- Prevent back button cache -->
-  <script>
-    window.addEventListener("pageshow", function (event) {
-      if (event.persisted) {
-        window.location.reload();
-      }
-    });
-  </script>
+async function saveAll() {
+  const rows = document.querySelectorAll("#purchaseTable tbody tr");
+
+  for (let row of rows) {
+    if (row.cells[6].innerText === "New") {
+      const form = new FormData();
+      form.append("item", row.cells[0].querySelector("input").value);
+      form.append("vendor", row.cells[1].querySelector("input").value);
+      form.append("quantity", row.cells[2].querySelector("input").value);
+      form.append("price", row.cells[3].querySelector("input").value);
+      form.append("date", row.cells[4].querySelector("input").value);
+      form.append("bill", row.cells[5].querySelector("input").files[0]);
+
+      await fetch("/local-purchase", { method: "POST", body: form });
+    }
+  }
+
+  loadPurchases();
+}
+
+async function deleteRow(id) {
+  await fetch(`/local-purchase/${id}`, { method: "DELETE" });
+  loadPurchases();
+}
+
+async function updateRow(id, btn) {
+  const row = btn.closest("tr");
+  const data = {
+    item: row.cells[0].innerText,
+    vendor: row.cells[1].innerText,
+    quantity: row.cells[2].innerText,
+    price: row.cells[3].innerText,
+    date: row.cells[4].innerText
+  };
+
+  await fetch(`/local-purchase/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  alert("Updated");
+}
+
+loadPurchases();
+</script>
+
 
 </body>
 </html>
-

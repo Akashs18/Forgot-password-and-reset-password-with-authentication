@@ -7,6 +7,17 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import "dotenv/config";
+import multer from "multer";
+
+const storage = multer.diskStorage({
+  destination: "public/uploads",
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  }
+});
+
+const upload = multer({ storage });
+
 
 
 // -------------------- CONFIG --------------------
@@ -253,6 +264,59 @@ app.post("/reset/:token", async (req, res) => {
 
   res.send("Password updated successfully. You can now login.");
 });
+
+//-----------------------local-purchase-----------------
+app.post("/local-purchase", upload.single("bill"), async (req, res) => {
+  try {
+    const { item, vendor, quantity, price, date } = req.body;
+    const billFile = req.file ? `/uploads/${req.file.filename}` : null;
+
+    await pool.query(
+      `INSERT INTO local_purchases (item, vendor, quantity, price, purchase_date, bill_file)
+       VALUES ($1,$2,$3,$4,$5,$6)`,
+      [item, vendor, quantity, price, date, billFile]
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
+});
+
+
+app.get("/local-purchase", async (req, res) => {
+  const result = await pool.query(
+    "SELECT * FROM local_purchases ORDER BY id DESC"
+  );
+  res.json(result.rows);
+});
+ //--------delete-----------
+ app.delete("/local-purchase/:id", async (req, res) => {
+  await pool.query("DELETE FROM local_purchases WHERE id=$1", [req.params.id]);
+  res.json({ success: true });
+});
+
+
+//--------------update------------
+app.put("/local-purchase/:id", async (req, res) => {
+  const { item, vendor, quantity, price, date } = req.body;
+
+  await pool.query(
+    `UPDATE local_purchases
+     SET item=$1, vendor=$2, quantity=$3, price=$4, purchase_date=$5
+     WHERE id=$6`,
+    [item, vendor, quantity, price, date, req.params.id]
+  );
+
+  res.json({ success: true });
+});
+
+
+
+
+
+
 
 // -------------------- START SERVER --------------------
 app.listen(PORT, () => {
