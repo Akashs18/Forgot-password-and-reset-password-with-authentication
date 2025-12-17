@@ -6,6 +6,8 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
+import "dotenv/config";
+
 
 // -------------------- CONFIG --------------------
 const app = express();
@@ -37,19 +39,20 @@ app.use(
   session({
     store: new PgSession({
       pool,
-      tableName: "session"
+      tableName: "session",
+      createTableIfMissing: true, // automatically create table if not exists
     }),
-    secret: process.env.SESSION_SECRET,
+    secret: "supersecret123456",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24
     }
   })
 );
-
+ 
 // -------------------- EMAIL --------------------
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",  // Use explicit host
@@ -71,6 +74,18 @@ function requireAuth(req, res, next) {
   }
   next();
 }
+
+//-------------------middleware----------------
+app.use((req, res, next) => {
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, private"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
+
 
 // -------------------- ROUTES --------------------
 
@@ -108,9 +123,14 @@ app.post("/login", async (req, res) => {
 });
 
 // DASHBOARD
-app.get("/dashboard", (req, res) => {
-  res.render("dashboard",{ email :req.session.email});
+app.get("/dashboard", requireAuth, (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+
+  res.render("dashboard", { email: req.session.email });
 });
+
 
 // SIGNUP
 app.get("/signup", (req, res) => {
@@ -143,9 +163,12 @@ app.post("/signup", async (req, res) => {
   }
 });
 // LOGOUT
-app.get("/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.redirect("/");
+app.post("/logout", (req, res) => {
+  req.session.destroy(err => {
+    if (err) return res.send("Logout failed");
+
+    res.clearCookie("connect.sid");
+    res.redirect(303, "/"); // forces browser to forget history entry
   });
 });
 

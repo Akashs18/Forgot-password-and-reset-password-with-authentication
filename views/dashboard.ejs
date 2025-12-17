@@ -2,14 +2,117 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard</title>
+  <title>Office Dashboard</title>
   <link rel="stylesheet" href="/styles.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background-color: #f4f6f9;
+    }
+
+    .header {
+      background-color: #1f2937;
+      color: #ffffff;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .logout-btn {
+      background-color: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .logout-btn:hover {
+      background-color: #b91c1c;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    .card {
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #111827;
+    }
+
+    .info {
+      margin-top: 15px;
+      color: #374151;
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 13px;
+      color: #6b7280;
+    }
+  </style>
 </head>
+
 <body>
-  <div class="dashboard">
-    <h1>Welcome to Dashboard</h1>
-    <p>You have successfully logged in!</p>
-    <a href="/" style="color:#007bff; text-decoration:none;">Logout</a>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Company Internal Dashboard</h1>
+
+    <form action="/logout" method="POST">
+      <button type="submit" class="logout-btn">Logout</button>
+    </form>
   </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="card">
+      <h2>Welcome</h2>
+      <p class="info">
+        You are successfully logged into the internal office system.
+        Please use the available tools responsibly and ensure data confidentiality.
+      </p>
+
+      <p class="info">
+        If you experience any issues, contact the IT support team.
+      </p>
+    </div>
+
+    <div class="footer">
+      © 2025 Company Name · Internal Use Only
+    </div>
+  </div>
+
+  <!-- Prevent back button cache -->
+  <script>
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    });
+  </script>
+
 </body>
 </html>
+
