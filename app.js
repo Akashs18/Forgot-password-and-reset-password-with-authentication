@@ -139,7 +139,7 @@ app.get("/dashboard", requireAuth, (req, res) => {
   res.set("Pragma", "no-cache");
   res.set("Expires", "0");
 
-  res.render("dashboard", { email: req.session.email });
+  res.render("new", { email: req.session.email });
 });
 
 
