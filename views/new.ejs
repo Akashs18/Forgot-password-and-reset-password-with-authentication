@@ -59,10 +59,74 @@ label{font-size:14px;font-weight:500}
 }
 
 /* Local Purchase */
-table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{border:1px solid #ddd;padding:8px}
-th{background:#f1f5f9}
-td input{width:100%;border:none}
+/* Local Purchase - Enhanced Design */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+thead {
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  color: #fff;
+}
+
+th, td {
+  border: 1px solid #e5e7eb;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+th {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+tbody tr:hover {
+  background: #e0f2fe;
+  transition: background 0.3s ease;
+}
+
+td input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 14px;
+}
+
+td button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+td button:hover {
+  opacity: 0.8;
+}
+
+table caption {
+  caption-side: top;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #1e293b;
+}
+
+
 
 /* Popup */
 .popup-overlay{
@@ -83,10 +147,10 @@ td input{width:100%;border:none}
 <!-- SIDEBAR -->
 <div class="sidebar">
   <ul class="menu">
-    <li class="menu-item active" onclick="switchTab('store')">
+    <li class="menu-item active" onclick="switchTab('store',event)">
       <i class="fas fa-warehouse"></i> Store Management
     </li>
-    <li class="menu-item" onclick="switchTab('local')">
+    <li class="menu-item" onclick="switchTab('local',event)">
       <i class="fas fa-shopping-cart"></i> Local Purchase
     </li>
     <li class="menu-item">
@@ -100,58 +164,11 @@ td input{width:100%;border:none}
 <!-- MAIN -->
 <div class="main-content">
 
-<!-- STORE MANAGEMENT -->
-<div class="tab-content active" id="store">
-  <h2>Store Management Entry</h2><br>
-
-  <form id="storeForm" enctype="multipart/form-data">
-    <div class="form-group">
-      <label>Purchase Order</label>
-      <select id="order_id_store" class="form-control"></select>
-    </div>
-
-    <div class="form-group">
-      <label>GRN</label>
-      <input id="grn_store" class="form-control">
-      <button type="button" class="btn" onclick="generateGRN()">Generate GRN</button>
-    </div>
-
-    <div class="form-group">
-      <label>Invoice</label>
-      <input type="file" class="form-control">
-    </div>
-
-    <button class="btn">Submit</button>
-  </form>
-</div>
-
-<!-- LOCAL PURCHASE -->
-<div class="tab-content" id="local">
-  <h2>Local Purchase Entry</h2><br>
-
-  <button class="btn" onclick="addRow()">➕ Add Row</button>
-  <button class="btn" onclick="saveAll()">💾 Save</button>
-
-  <table id="purchaseTable">
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>Vendor</th>
-        <th>Qty</th>
-        <th>Price</th>
-        <th>Date</th>
-        <th>Bill</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
 
 
 
-<!-- Store Management Tab -->
-      <div class="tab-content active" id="store-management">
+
+ <div class="tab-content active" id="store">
         <div class="tab-header">
           <h3>Store Management Entry</h3>
           <p>Enter inventory details for store management</p>
@@ -182,7 +199,7 @@ td input{width:100%;border:none}
           </div>
 
 
-          <!-- Supplier Bank Details Section -->
+         <!-- Supplier Bank Details Section-->
           
 
       <!-- Bank Details -->
@@ -223,13 +240,45 @@ td input{width:100%;border:none}
         </button>
       </div>
 
-    </form>
+     </form>
+   </div>
+ 
+
+
+
+
+
+
+ <!-- LOCAL PURCHASE -->
+ <div class="tab-content" id="local"> 
+  <h1>Local Purchase Entry</h1><br>
+
+  <button class="btn" onclick="addRow()">➕ Add Row</button>
+  <button class="btn" onclick="saveAll()">💾 Save</button>
+
+  <table id="purchaseTable">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Vendor</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Date</th>
+        <th>Bill</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+   </table>
   </div>
- </div>
+ </div> 
 </div>
+
+
+
 <script>
 /* TAB SWITCH */
-function switchTab(tab){
+function switchTab(tab, event){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.getElementById(tab).classList.add('active');
 
