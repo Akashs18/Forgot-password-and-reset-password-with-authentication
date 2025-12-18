@@ -9,6 +9,12 @@ import connectPgSimple from "connect-pg-simple";
 import "dotenv/config";
 import multer from "multer";
 
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 const storage = multer.diskStorage({
   destination: "public/uploads",
   filename: (req, file, cb) => {
@@ -314,6 +320,8 @@ app.put("/local-purchase/:id", async (req, res) => {
 
 
 
+
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 
 
